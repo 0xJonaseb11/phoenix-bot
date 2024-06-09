@@ -2,6 +2,8 @@
 
 ## About
 
+A basic trading bot built on solana blockchain.
+
 ### Getting started
 
 ------------------
