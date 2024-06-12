@@ -1,12 +1,6 @@
 require("dotenv").config();
-import {
-  Keypair,
-  Connection,
-  PublicKey,
-  Transaction,
-  sendAndConfirmTransaction,
-  TransactionInstruction,
-} from "@solana/web3.js";
+
+import { Keypair, Connection, PublicKey, Transaction, sendAndConfirmTransaction, type TransactionInstruction } from "@solana/web3.js";
 import * as phoenixSdk from "@ellipsis-labs/phoenix-sdk";
 
 export const execute = async () => {
@@ -24,6 +18,7 @@ export const execute = async () => {
     throw new Error("Missing PRIVATE_KEY in your .env file");
   }
 
+  // biome-ignore lint/suspicious/noImplicitAnyLet: <explanation>
   let privateKeyArray;
   try {
     privateKeyArray = JSON.parse(process.env.PRIVATE_KEY);
@@ -33,7 +28,7 @@ export const execute = async () => {
     );
   }
 
-  let traderKeypair = Keypair.fromSecretKey(new Uint8Array(privateKeyArray));
+  const traderKeypair = Keypair.fromSecretKey(new Uint8Array(privateKeyArray));
 
   const marketPubkey = new PublicKey(
     "4DoNfFBfF7UokCC2FQzriy7yHK6DY6NVdYpuekQ5pRgg"
@@ -51,6 +46,7 @@ export const execute = async () => {
   if (!marketData) {
     throw new Error("Market data not found");
   }
+
 
   const setupNewMakerIxs = await phoenixSdk.getMakerSetupInstructionsForMarket(
     connection,
@@ -94,7 +90,7 @@ export const execute = async () => {
         }
       );
 
-      console.log("Cancel tx link: https://beta.solscan.io/tx/" + txid);
+      console.log(`Cancel tx link: https://beta.solscan.io/tx/${txid}`);
     } catch (err) {
       console.log("Error: ", err);
       continue;
@@ -112,10 +108,10 @@ export const execute = async () => {
       if (!data.data || !data.data.amount)
         throw new Error("Invalid response structure");
 
-      const price = parseFloat(data.data.amount);
+      const price = Number.parseFloat(data.data.amount);
 
-      let bidPrice = price - EDGE;
-      let askPrice = price + EDGE;
+      const bidPrice = price - EDGE;
+      const askPrice = price + EDGE;
 
       console.log(`SOL price: ${price}`);
       console.log(`Placing bid (buy) order at: ${bidPrice}`);
